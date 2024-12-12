@@ -17,6 +17,7 @@ services:
       - app_network
     volumes:
       - ./backend:/app
+      - ./static:/app/static
 
   frontend:
     build:

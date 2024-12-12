@@ -1,4 +1,4 @@
-// src/context/AuthContext.js
+// src/components/AuthContext.js
 import React, { createContext, useState, useEffect, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 
