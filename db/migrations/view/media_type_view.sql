@@ -1,3 +1,4 @@
+-- db/migrations/view/media_type_view.sql
 -- Представление для типа 'anime'
 CREATE OR REPLACE VIEW media_content_anime AS
 SELECT * 

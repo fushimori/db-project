@@ -1,3 +1,4 @@
+-- db/migrations/functions/update_media_status_trigger.sql
 CREATE OR REPLACE FUNCTION update_media_status_on_end()
 RETURNS TRIGGER AS $$
 BEGIN

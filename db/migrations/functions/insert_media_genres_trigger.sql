@@ -1,3 +1,5 @@
+-- db/migrations/functions/insert_media_genres_trigger.sql
+
 CREATE TABLE MediaGenreRequests (
     id BIGSERIAL PRIMARY KEY,
     media_title VARCHAR(255) NOT NULL,

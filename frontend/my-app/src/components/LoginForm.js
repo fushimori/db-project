@@ -1,21 +1,19 @@
 // src/components/LoginForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { loginUser } from '../api/auth';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';  // Контекст для обновления состояния аутентификации
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login } = useAuth();  // Используем login из контекста
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      await loginUser(username, password);
-      login();  // Обновляем состояние аутентификации
-      navigate('/');
+      await login(username, password);  // Используем login из контекста, который уже обрабатывает токен и роль
+      navigate('/');  // Перенаправляем на главную страницу после успешного логина
     } catch (error) {
       alert('Error during login');
     }

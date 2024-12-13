@@ -1,38 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { getManga } from '../api/media'; // Функция получения данных из API
+// src/components/MangaPage.js
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getManga, searchManga } from '../api/media';
 import MediaItem from './MediaItem';
-import { useAuth } from '../context/AuthContext';
+import SearchBar from './SearchBar';
 
 const MangaPage = () => {
   const [mangaList, setMangaList] = useState([]);
-  const { isLoggedIn } = useAuth();
+  const [filteredMangaList, setFilteredMangaList] = useState([]);
+  const location = useLocation();
+
+  const getQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
+  }, [location.search]);
 
   useEffect(() => {
-    console.log('Fetching manga...');
     const fetchManga = async () => {
+      const query = getQueryParam();
       try {
-        const data = await getManga();
-        console.log('Manga data received:', data);  // Выводим полученные данные
-        setMangaList(data.manga); // Обновляем состояние
+        let data;
+        if (query) {
+          data = await searchManga(query);
+        } else {
+          data = await getManga();
+        }
+        setMangaList(data.manga || data.results);
+        setFilteredMangaList(data.manga || data.results);
       } catch (error) {
         console.error("Error fetching manga data:", error);
       }
     };
     fetchManga();
-  }, []);  // Убедитесь, что массив зависимостей пустой
-  
+  }, [getQueryParam]);
+
+  const handleSearch = (query) => {
+    setFilteredMangaList(mangaList.filter(manga => manga.title.toLowerCase().includes(query.toLowerCase())));
+  };
+
   return (
     <div>
       <h2>Manga</h2>
+      <SearchBar currentCategory="manga" onSearch={handleSearch} />
       <div className="media-list">
-        {mangaList.length > 0 ? (
-          mangaList.map((manga) => (
-            <div key={manga.id}> {/* Убедитесь, что ключ уникален */}
-              <MediaItem media={manga} status={isLoggedIn ? manga.status : null} />
+        {filteredMangaList.length > 0 ? (
+          filteredMangaList.map((manga) => (
+            <div key={manga.id}>
+              <MediaItem media={manga} />
             </div>
           ))
         ) : (
-          <p>No manga available</p>  // Сообщение, если аниме нет
+          <p>No manga available</p>
         )}
       </div>
     </div>

@@ -1,38 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { getSeries } from '../api/media'; // Функция получения данных из API
+// src/components/SeriesPage.js
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getSeries, searchSeries } from '../api/media';
 import MediaItem from './MediaItem';
-import { useAuth } from '../context/AuthContext';
+import SearchBar from './SearchBar';
 
 const SeriesPage = () => {
   const [seriesList, setSeriesList] = useState([]);
-  const { isLoggedIn } = useAuth();
+  const [filteredSeriesList, setFilteredSeriesList] = useState([]);
+  const location = useLocation();
+
+  const getQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
+  }, [location.search]);
 
   useEffect(() => {
-    console.log('Fetching series...');
     const fetchSeries = async () => {
+      const query = getQueryParam();
       try {
-        const data = await getSeries();
-        console.log('Series data received:', data);  // Выводим полученные данные
-        setSeriesList(data.series); // Обновляем состояние
+        let data;
+        if (query) {
+          data = await searchSeries(query);
+        } else {
+          data = await getSeries();
+        }
+        setSeriesList(data.series || data.results);
+        setFilteredSeriesList(data.series || data.results);
       } catch (error) {
         console.error("Error fetching series data:", error);
       }
     };
     fetchSeries();
-  }, []);  // Убедитесь, что массив зависимостей пустой
-  
+  }, [getQueryParam]);
+
+  const handleSearch = (query) => {
+    setFilteredSeriesList(seriesList.filter(series => series.title.toLowerCase().includes(query.toLowerCase())));
+  };
+
   return (
     <div>
       <h2>Series</h2>
+      <SearchBar currentCategory="series" onSearch={handleSearch} />
       <div className="media-list">
-        {seriesList.length > 0 ? (
-          seriesList.map((series) => (
-            <div key={series.id}> {/* Убедитесь, что ключ уникален */}
-              <MediaItem media={series} status={isLoggedIn ? series.status : null} />
+        {filteredSeriesList.length > 0 ? (
+          filteredSeriesList.map((series) => (
+            <div key={series.id}>
+              <MediaItem media={series} />
             </div>
           ))
         ) : (
-          <p>No series available</p>  // Сообщение, если аниме нет
+          <p>No series available</p>
         )}
       </div>
     </div>

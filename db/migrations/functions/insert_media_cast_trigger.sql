@@ -1,3 +1,4 @@
+-- db/migrations/functions/insert_media_cast_trigger.sql
 CREATE TABLE MediaCastRequests (
     id BIGSERIAL PRIMARY KEY,
     media_title VARCHAR(255) NOT NULL,

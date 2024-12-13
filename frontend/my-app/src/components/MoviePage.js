@@ -1,38 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { getMovie } from '../api/media'; // Функция получения данных из API
+// src/components/MoviePage.js
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getMovie, searchMovie } from '../api/media';
 import MediaItem from './MediaItem';
-import { useAuth } from '../context/AuthContext';
+import SearchBar from './SearchBar';
 
 const MoviePage = () => {
   const [movieList, setMovieList] = useState([]);
-  const { isLoggedIn } = useAuth();
+  const [filteredMovieList, setFilteredMovieList] = useState([]);
+  const location = useLocation();
+
+  const getQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
+  }, [location.search]);
 
   useEffect(() => {
-    console.log('Fetching movie...');
-    const fetchMovie = async () => {
+    const fetchMovies = async () => {
+      const query = getQueryParam();
       try {
-        const data = await getMovie();
-        console.log('Movie data received:', data);  // Выводим полученные данные
-        setMovieList(data.movie); // Обновляем состояние
+        let data;
+        if (query) {
+          data = await searchMovie(query);
+        } else {
+          data = await getMovie();
+        }
+        setMovieList(data.movie || data.results);
+        setFilteredMovieList(data.movie || data.results);
       } catch (error) {
         console.error("Error fetching movie data:", error);
       }
     };
-    fetchMovie();
-  }, []);  // Убедитесь, что массив зависимостей пустой
-  
+    fetchMovies();
+  }, [getQueryParam]);
+
+  const handleSearch = (query) => {
+    setFilteredMovieList(movieList.filter(movie => movie.title.toLowerCase().includes(query.toLowerCase())));
+  };
+
   return (
     <div>
-      <h2>Movie</h2>
+      <h2>Movies</h2>
+      <SearchBar currentCategory="movie" onSearch={handleSearch} />
       <div className="media-list">
-        {movieList.length > 0 ? (
-          movieList.map((movie) => (
-            <div key={movie.id}> {/* Убедитесь, что ключ уникален */}
-              <MediaItem media={movie} status={isLoggedIn ? movie.status : null} />
+        {filteredMovieList.length > 0 ? (
+          filteredMovieList.map((movie) => (
+            <div key={movie.id}>
+              <MediaItem media={movie} />
             </div>
           ))
         ) : (
-          <p>No movie available</p>  // Сообщение, если аниме нет
+          <p>No movies available</p>
         )}
       </div>
     </div>

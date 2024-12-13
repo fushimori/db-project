@@ -1,5 +1,5 @@
 # app/person.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from db.connection import Database
 # from app.auth import get_current_user  # Используем Depends для передачи токена
 
@@ -7,7 +7,6 @@ router = APIRouter()
 
 @router.get("/")
 async def get_person():
-    print("goida")  # Используем Depends
     pool = await Database.get_connection()
     async with pool.acquire() as conn:
         # Базовый запрос, доступный всем
@@ -32,7 +31,22 @@ async def get_person():
         # Для гостей возвращаем только базовую информацию
         return {"person": [dict(person) for person in person_list]}
 
-@router.get("/{person_id}")
+@router.get("/search")
+async def search_person(
+    query: str = Query(None, description="Search query")
+):
+    pool =await Database.get_connection()
+    async with pool.acquire() as conn:
+        # Базовый запрос, доступный всем
+        base_query = """
+        SELECT id, name, photo_path FROM persons
+        WHERE name ILIKE $1
+        """
+        search_results = await conn.fetch(base_query, f"%{query}%")
+        return {"results": [dict(result) for result in search_results]}
+
+
+@router.get("/{person_id}/")
 async def get_person_details( person_id: int):  # current_user: str = Depends(get_current_user)
     pool = await Database.get_connection()
     async with pool.acquire() as conn:

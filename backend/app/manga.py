@@ -1,5 +1,5 @@
 # app/manga.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from db.connection import Database
 from app.auth import get_current_user  # Используем Depends для передачи токена
 
@@ -32,8 +32,42 @@ async def get_manga(
 
         # Для гостей возвращаем только базовую информацию
         return {"manga": [dict(manga) for manga in manga_list]}
+    
+@router.get("/search")
+async def search_manga(
+    query: str = Query(None, description="Search query"),
+    current_user: str = Depends(get_current_user)
+):
+    pool = await Database.get_connection()
+    async with pool.acquire() as conn:
+        # Запрос для поиска аниме по названию
+        base_query = """
+        SELECT id, title, photo_path, type FROM media_content_manga
+        WHERE title ILIKE $1
+        """
+        search_results = await conn.fetch(base_query, f"%{query}%")
 
-@router.get("/{manga_id}")
+        if current_user:
+            # Если пользователь авторизован, получаем расширенные данные
+            extended_data = []
+            for result in search_results:
+                result_dict = dict(result)
+                status_query = """
+                SELECT status FROM UserMediaList
+                WHERE user_id = (SELECT id FROM Users WHERE username = $1)
+                AND media_id = $2
+                """
+                status_record = await conn.fetchrow(status_query, current_user, result["id"])
+                result_dict["status"] = status_record["status"] if status_record else None
+                extended_data.append(result_dict)
+            return {"results": extended_data}
+
+        # Для гостей возвращаем только базовую информацию
+        return {"results": [dict(result) for result in search_results]}
+
+
+
+@router.get("/{manga_id}/")
 async def get_manga_details(
     manga_id: int,
     current_user: str = Depends(get_current_user)
@@ -49,7 +83,6 @@ async def get_manga_details(
         WHERE id = $1
         """
         manga_details = await conn.fetchrow(query, manga_id)
-        print(manga_details)
         if not manga_details:
             return {"error": "Media not found"}
 
@@ -83,3 +116,4 @@ async def get_manga_details(
             manga_details_dict["user_review"] = review_record["review_text"] if review_record else None
 
         return {"manga_details": manga_details_dict}
+

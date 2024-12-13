@@ -1,3 +1,5 @@
+-- db/migrations/defination/0_schema.sql
+
 -- Enums
 CREATE TYPE media_type_enum AS ENUM ('anime', 'manga', 'book', 'movie', 'series');
 CREATE TYPE media_status_enum AS ENUM ('ongoing', 'completed', 'hiatus', 'cancelled');

@@ -1,8 +1,10 @@
 # app/anime.py
-from fastapi import APIRouter, Depends
+import csv
+from io import StringIO
+from datetime import datetime
+from fastapi import APIRouter, Depends, UploadFile, File, HTTPException, Query
 from db.connection import Database
-from app.auth import get_current_user  # Используем Depends для передачи токена
-
+from app.auth import get_current_user, admin_required  # Используем Depends для передачи токена
 router = APIRouter()
 
 @router.get("/")
@@ -33,7 +35,41 @@ async def get_anime(
         # Для гостей возвращаем только базовую информацию
         return {"anime": [dict(anime) for anime in anime_list]}
 
-@router.get("/{anime_id}")
+@router.get("/search")
+async def search_anime(
+    query: str = Query(None, description="Search query"),
+    current_user: str = Depends(get_current_user)
+):
+    pool = await Database.get_connection()
+    async with pool.acquire() as conn:
+        # Запрос для поиска аниме по названию
+        base_query = """
+        SELECT id, title, photo_path, type FROM media_content_anime
+        WHERE title ILIKE $1
+        """
+        search_results = await conn.fetch(base_query, f"%{query}%")
+
+        if current_user:
+            # Если пользователь авторизован, получаем расширенные данные
+            extended_data = []
+            for result in search_results:
+                result_dict = dict(result)
+                status_query = """
+                SELECT status FROM UserMediaList
+                WHERE user_id = (SELECT id FROM Users WHERE username = $1)
+                AND media_id = $2
+                """
+                status_record = await conn.fetchrow(status_query, current_user, result["id"])
+                result_dict["status"] = status_record["status"] if status_record else None
+                extended_data.append(result_dict)
+            return {"results": extended_data}
+
+        # Для гостей возвращаем только базовую информацию
+        return {"results": [dict(result) for result in search_results]}
+
+
+
+@router.get("/{anime_id}/")
 async def get_anime_details(
     anime_id: int,
     current_user: str = Depends(get_current_user)
@@ -82,3 +118,53 @@ async def get_anime_details(
             anime_details_dict["user_review"] = review_record["review_text"] if review_record else None
 
         return {"anime_details": anime_details_dict}
+
+@router.post("/upload-csv")
+async def upload_csv(file: UploadFile = File(...),
+                     user: dict = Depends(admin_required)
+):
+    pool = await Database.get_connection()
+    contents = await file.read()
+    csv_file = StringIO(contents.decode('utf-8'))
+    reader = csv.DictReader(csv_file)
+
+    async with pool.acquire() as conn:
+        for row in reader:
+            # Преобразуем строки в данные для добавления в таблицу
+            title = row['title']
+            description = row['description']
+            avg_rating = float(row['avg_rating']) if row['avg_rating'] and row['avg_rating'] != 'null' else None
+            media_type = row['type']  # предполагаем, что это строка, которая соответствует enum
+            release_date = datetime.strptime(row['release_date'], '%Y-%m-%d').date() if row['release_date'] and row['release_date'] != 'null' else None
+            status = row['status']
+            end_date = datetime.strptime(row['end_date'], '%Y-%m-%d').date() if row['end_date'] and row['end_date'] != 'null' else None
+            chapter_count = int(row['chapter_count']) if row['chapter_count'] and row['chapter_count'] != 'null' else None
+            episode_count = int(row['episode_count']) if row['episode_count'] and row['episode_count'] != 'null' else None
+            photo_path = row['photo_path']
+
+            # Вставка данных в таблицу
+            await conn.execute(
+                """
+                INSERT INTO MediaContent (title, description, avg_rating, type, release_date, 
+                                          status, end_date, chapter_count, episode_count, photo_path)
+                VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10)
+                """,
+                title, description, avg_rating, media_type, release_date, status, end_date, chapter_count, episode_count, photo_path
+            )
+
+    return {"message": "CSV file uploaded successfully!"}
+
+
+@router.delete("/delete-media/{media_id}")
+async def delete_media(media_id: int):
+    pool = await Database.get_connection()
+    async with pool.acquire() as conn:
+        # Проверим, существует ли медиа с таким ID
+        media = await conn.fetchrow("SELECT * FROM MediaContent WHERE id = $1", media_id)
+        if not media:
+            raise HTTPException(status_code=404, detail="Media not found")
+        
+        # Удаляем медиа
+        await conn.execute("DELETE FROM MediaContent WHERE id = $1", media_id)
+
+    return {"message": "Media deleted successfully"}

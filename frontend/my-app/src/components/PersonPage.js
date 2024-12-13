@@ -1,7 +1,10 @@
+
 // src/components/PersonPage.js
-import React, { useEffect, useState } from 'react';
-import { getPerson } from '../api/media'; // Функция получения данных из API
-import { Link } from 'react-router-dom';
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import { getPerson, searchPerson } from '../api/media';
+import SearchBar from './SearchBar';
+
 
 const PersonItem = ({ person }) => {  // Используйте деструктуризацию для props
   return (
@@ -14,39 +17,60 @@ const PersonItem = ({ person }) => {  // Используйте деструкт
   );
 };
 
+
 const PersonPage = () => {
   const [personList, setPersonList] = useState([]);
+  const [filteredPersonList, setFilteredPersonList] = useState([]);
+  const location = useLocation();
 
+  // Функция получения query-параметра из URL
+  const getQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
+  }, [location.search]);
+
+  // Загрузка данных о персонах и обработка query
   useEffect(() => {
-    console.log('Fetching person data...');
-    const fetchPerson = async () => {
+    const fetchPersons = async () => {
+      const query = getQueryParam();
       try {
-        const data = await getPerson();
-        console.log('Person data received:', data);  // Выводим данные для отладки
-        if (data && data.person) {  // Убедитесь, что данные содержат ключ person
-          setPersonList(data.person);  // Обновляем состояние
+        let data;
+        if (query) {
+          data = await searchPerson(query); // Поиск по запросу
         } else {
-          console.error("No person data found.");
+          data = await getPerson(); // Загрузка всех данных, если query отсутствует
         }
+        setPersonList(data.person || data.results); // Обновляем список персон
+        setFilteredPersonList(data.person || data.results); // Отображаем изначально все или отфильтрованные данные
       } catch (error) {
-        console.error("Error fetching person data:", error);
+        console.error('Error fetching person data:', error);
       }
     };
-    fetchPerson();
-  }, []);  // Пустой массив зависимостей для загрузки данных при монтировании компонента
-  
+    fetchPersons();
+  }, [getQueryParam]);
+
+  // Обработчик поиска по имени персоны
+  const handleSearch = (query) => {
+    setFilteredPersonList(
+      personList.filter((person) =>
+        person.name.toLowerCase().includes(query.toLowerCase())
+      )
+    );
+  };
+
   return (
     <div>
       <h2>Persons</h2>
+      <SearchBar currentCategory="person" onSearch={handleSearch} />
       <div className="person-list">
-        {personList.length > 0 ? (
-          personList.map((person) => (
-            <div key={person.id}> {/* Убедитесь, что ключ уникален */}
+        {filteredPersonList.length > 0 ? (
+          filteredPersonList.map((person) => (
+            <div key={person.id}>
               <PersonItem person={person} />
             </div>
           ))
         ) : (
-          <p>No persons available</p>  // Сообщение, если данных нет
+          <p>No persons available</p>
         )}
       </div>
     </div>

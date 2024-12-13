@@ -1,26 +1,25 @@
 // src/components/RegisterForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { registerUser } from '../api/auth';
+import { useAuth } from '../context/AuthContext';  // Контекст для регистрации
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const navigate = useNavigate();
+  const { register } = useAuth();  // Используем register из контекста
 
-    const handleRegister = async (e) => {
+  const handleRegister = async (e) => {
     e.preventDefault();
     try {
-        const response = await registerUser(username, email, password);  // функция отправки запроса
-        alert('Registration successful!');
-        navigate('/login');
+      await register(username, email, password);  // Используем register из контекста для регистрации
+      navigate('/login');  // Перенаправление на страницу входа после успешной регистрации
     } catch (error) {
-        console.error('Registration error:', error);
-        alert('Error during registration');
+      console.error('Registration error:', error);
+      alert('Error during registration');
     }
-    };
-
+  };
 
   return (
     <div>

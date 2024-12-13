@@ -1,3 +1,4 @@
+-- db/migrations/functions/log_trigger.sql
 CREATE TABLE ChangeLogs (
     id BIGSERIAL PRIMARY KEY, -- Уникальный идентификатор для каждого лога
     table_name VARCHAR(255) NOT NULL, -- Название таблицы, в которой произошло изменение

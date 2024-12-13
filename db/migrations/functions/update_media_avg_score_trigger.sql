@@ -1,3 +1,4 @@
+-- db/migrations/functions/update_media_avg_score_trigger.sql
 CREATE OR REPLACE FUNCTION update_media_avg_rating()
 RETURNS TRIGGER AS $$
 BEGIN

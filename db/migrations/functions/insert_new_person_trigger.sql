@@ -1,3 +1,5 @@
+-- db/migrations/functions/insert_new_person_trigger.sql
+
 CREATE OR REPLACE FUNCTION insert_or_update_person()
 RETURNS TRIGGER AS $$
 BEGIN

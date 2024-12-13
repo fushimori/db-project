@@ -1,4 +1,5 @@
--- add_photo_path_columns.sql
+
+-- db/migrations/defination/add_photo_path.sql
 
 -- Добавление новых полей в таблицы
 ALTER TABLE Users ADD COLUMN photo_path VARCHAR(255) DEFAULT '/static/default.png';

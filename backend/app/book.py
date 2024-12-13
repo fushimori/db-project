@@ -1,5 +1,5 @@
 # app/book.py
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Query
 from db.connection import Database
 from app.auth import get_current_user  # Используем Depends для передачи токена
 
@@ -32,6 +32,39 @@ async def get_book(
 
         # Для гостей возвращаем только базовую информацию
         return {"book": [dict(book) for book in book_list]}
+@router.get("/search")
+async def search_book(
+    query: str = Query(None, description="Search query"),
+    current_user: str = Depends(get_current_user)
+):
+    pool = await Database.get_connection()
+    async with pool.acquire() as conn:
+        # Запрос для поиска аниме по названию
+        base_query = """
+        SELECT id, title, photo_path, type FROM media_content_book
+        WHERE title ILIKE $1
+        """
+        search_results = await conn.fetch(base_query, f"%{query}%")
+
+        if current_user:
+            # Если пользователь авторизован, получаем расширенные данные
+            extended_data = []
+            for result in search_results:
+                result_dict = dict(result)
+                status_query = """
+                SELECT status FROM UserMediaList
+                WHERE user_id = (SELECT id FROM Users WHERE username = $1)
+                AND media_id = $2
+                """
+                status_record = await conn.fetchrow(status_query, current_user, result["id"])
+                result_dict["status"] = status_record["status"] if status_record else None
+                extended_data.append(result_dict)
+            return {"results": extended_data}
+
+        # Для гостей возвращаем только базовую информацию
+        return {"results": [dict(result) for result in search_results]}
+
+
 
 @router.get("/{book_id}")
 async def get_book_details(
@@ -49,7 +82,6 @@ async def get_book_details(
         WHERE id = $1
         """
         book_details = await conn.fetchrow(query, book_id)
-        print(book_details)
         if not book_details:
             return {"error": "Media not found"}
 
@@ -83,3 +115,4 @@ async def get_book_details(
             book_details_dict["user_review"] = review_record["review_text"] if review_record else None
 
         return {"book_details": book_details_dict}
+

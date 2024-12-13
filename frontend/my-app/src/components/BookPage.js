@@ -1,38 +1,56 @@
-import React, { useEffect, useState } from 'react';
-import { getBook } from '../api/media'; // Функция получения данных из API
+// src/components/BookPage.js
+import React, { useEffect, useState, useCallback } from 'react';
+import { useLocation } from 'react-router-dom';
+import { getBook, searchBook } from '../api/media';
 import MediaItem from './MediaItem';
-import { useAuth } from '../context/AuthContext';
+import SearchBar from './SearchBar';
 
 const BookPage = () => {
   const [bookList, setBookList] = useState([]);
-  const { isLoggedIn } = useAuth();
+  const [filteredBookList, setFilteredBookList] = useState([]);
+  const location = useLocation();
+
+  const getQueryParam = useCallback(() => {
+    const params = new URLSearchParams(location.search);
+    return params.get('query') || '';
+  }, [location.search]);
 
   useEffect(() => {
-    console.log('Fetching book...');
-    const fetchBook = async () => {
+    const fetchBooks = async () => {
+      const query = getQueryParam();
       try {
-        const data = await getBook();
-        console.log('Book data received:', data);  // Выводим полученные данные
-        setBookList(data.book); // Обновляем состояние
+        let data;
+        if (query) {
+          data = await searchBook(query);
+        } else {
+          data = await getBook();
+        }
+        setBookList(data.book || data.results);
+        setFilteredBookList(data.book || data.results);
       } catch (error) {
         console.error("Error fetching book data:", error);
       }
     };
-    fetchBook();
-  }, []);  // Убедитесь, что массив зависимостей пустой
-  
+    fetchBooks();
+  }, [getQueryParam]);
+
+  const handleSearch = (query) => {
+    setFilteredBookList(bookList.filter(book => book.title.toLowerCase().includes(query.toLowerCase())));
+  };
+
   return (
     <div>
-      <h2>Book</h2>
+      <h2>Books</h2>
+      <SearchBar currentCategory="book" onSearch={handleSearch} />
       <div className="media-list">
-        {bookList.length > 0 ? (
-          bookList.map((book) => (
-            <div key={book.id}> {/* Убедитесь, что ключ уникален */}
-              <MediaItem media={book} status={isLoggedIn ? book.status : null} />
+        {filteredBookList.length > 0 ? (
+          filteredBookList.map((book) => (
+            <div key={book.id}>
+              <MediaItem media={book} />
             </div>
           ))
         ) : (
-          <p>No book available</p>  // Сообщение, если аниме нет
+          <p>No books available</p>
         )}
       </div>
     </div>

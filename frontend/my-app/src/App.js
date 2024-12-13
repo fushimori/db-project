@@ -17,7 +17,6 @@ import BookDetails from './components/BookDetails';
 import PersonPage from './components/PersonPage';
 import PersonDetails from './components/PersonDetails';
 import ProfilePage from './components/ProfilePage'; // Импортируем компонент профиля
-import SearchPage from './components/SearchPage';
 
 const App = () => {
   return (
@@ -40,7 +39,6 @@ const App = () => {
           <Route path="/person" element={<PersonPage />} />
           <Route path="/person/:personId" element={<PersonDetails />} />
           <Route path="/profile" element={<ProfilePage />} /> {/* Добавляем маршрут для профиля */}
-          <Route path="/search" element={<SearchPage />} />
           <Route path="/" element={<h1>Home</h1>} />
         </Routes>
       </AuthProvider>
