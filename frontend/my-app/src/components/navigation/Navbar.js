@@ -1,13 +1,14 @@
 // src/components/Navbar.js
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../../context/AuthContext';
+import './Navbar.css'; // Импортируем CSS-файл
 
 const Navbar = () => {
   const { isLoggedIn, logout } = useAuth();
 
   return (
-    <nav>
+    <nav className="navbar"> {/* Добавляем класс navbar */}
       <Link to="/">Home</Link>
       {isLoggedIn ? (
         <>

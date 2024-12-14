@@ -36,6 +36,7 @@ app.add_middleware(
 def read_root():
     return {"message": "Welcome to the API!"}
 
+app.include_router(admin_router, prefix="/admin", tags=["admin"])
 app.include_router(user_router, prefix="/user", tags=["user"])
 app.include_router(profile_router, prefix="/profile", tags=["profile"])
 app.include_router(manga_router, prefix="/manga", tags=["manga"])

@@ -1,6 +1,7 @@
 // src/components/SearchBar.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import './SearchBar.css'; // Импортируем CSS-файл
 
 const SearchBar = ({ currentCategory, onSearch }) => {
   const [query, setQuery] = useState('');
@@ -28,7 +29,7 @@ const SearchBar = ({ currentCategory, onSearch }) => {
   };
 
   return (
-    <form onSubmit={handleSearch}> {/* Используем форму для удобного отправления запроса */}
+    <form className="search-bar" onSubmit={handleSearch}> {/* Добавляем класс search-bar */}
       <input
         type="text"
         placeholder="Search..."

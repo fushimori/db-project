@@ -1,89 +1,60 @@
-/* src/App.css */
-.media-item {
+/* Основные стили для контейнеров */
+body {
+  font-family: 'Arial', sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #f4f4f9; /* Светлый фон */
+  color: #333; /* Темно-серый текст */
+}
+
+/* Контейнер страницы */
+.page-container {
   display: flex;
   flex-direction: column;
-  align-items: center;
-  margin: 20px;
+  min-height: 100vh; /* Убедитесь, что контейнер занимает всю высоту экрана */
 }
 
-.media-item img {
-  width: 200px;
-  height: 300px;
+/* Верхняя часть страницы */
+.top-section {
+  background-color: #f4f4f9; /* Светлый фон */
+  padding: 20px;
+  flex-shrink: 0; /* Запрещаем сжатие */
 }
 
-.status {
-  padding: 5px 10px;
-  margin-top: 10px;
-  border-radius: 5px;
+/* Контейнер для содержимого */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  margin-top: 80px; /* Отступ сверху, чтобы не перекрывать Navbar */
+}
+
+/* Нижняя часть страницы */
+.bottom-section {
+  background-color: #212121; /* Темный фон */
   color: white;
+  padding: 20px;
+  margin-top: auto; /* Прижимаем нижнюю часть к низу */
+  text-align: center; /* Выравниваем текст по центру */
 }
 
-.media-list {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-}
-
+/* Стили для кнопок */
 button {
-  padding: 10px;
-  font-size: 16px;
+  padding: 5px 10px;
+  font-size: 14px;
   background-color: #4CAF50;
   color: white;
   border: none;
   cursor: pointer;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
 }
 
 button:hover {
   background-color: #45a049;
 }
 
-/* Add this to ensure spacing and alignment don't cause issues */
-.media-list > .media-item {
-  margin: 10px;
-}
-
-/* Пример стилей для Navbar и поисковой строки */
-.navbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  background-color: #212121;
-  color: white;
-}
-
-.navbar a {
-  margin: 0 15px;
-  text-decoration: none;
-  color: white;
-}
-
-.search-bar form {
-  display: flex;
-  align-items: center;
-}
-
-.search-bar input,
-.search-bar select,
-.search-bar button {
-  margin-right: 10px;
-}
-
-.search-bar input {
-  padding: 8px;
-}
-
-.search-bar select {
-  padding: 8px;
-}
-
-.search-bar button {
-  padding: 8px;
-  background-color: #f4a261;
-  border: none;
-  cursor: pointer;
-}
-
-.search-bar button:hover {
-  background-color: #e09f4d;
+button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
 }

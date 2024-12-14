@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { getPersonDetails } from '../api/media'; // Импортируем API-функцию
+import { getPersonDetails } from '../../api/media'; // Импортируем API-функцию
+import './PersonDetails.css'; // Импортируем CSS-файл
 
 const PersonDetails = () => {
   const { personId } = useParams(); // Получаем personId из URL
@@ -25,11 +26,17 @@ const PersonDetails = () => {
 
   return (
     <div className="person-details">
-      <img src={`http://localhost:8000${personDetails.photo_path}`} alt={personDetails.name} />
-      <h1>{personDetails.name}</h1>
-      {personDetails.nationality && <p>Nationality: {personDetails.nationality}</p>}
-      {personDetails.birth_date && <p>Birth date: {personDetails.birth_date}</p>}
-      {personDetails.main_role && <p>Main role: {personDetails.main_role}</p>}
+      <div className="person-content">
+        <img src={`http://localhost:8000${personDetails.photo_path}`} alt={personDetails.name} />
+        <div className="person-info">
+          <h1>{personDetails.name}</h1>
+          <div className="section">
+            {personDetails.nationality && <p>Nationality: {personDetails.nationality}</p>}
+            {personDetails.birth_date && <p>Birth date: {personDetails.birth_date}</p>}
+            {personDetails.main_role && <p>Main role: {personDetails.main_role}</p>}
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

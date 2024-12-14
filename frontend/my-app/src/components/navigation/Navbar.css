@@ -1,0 +1,28 @@
+/* Стили для Navbar */
+.navbar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #212121;
+    color: white;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 10;
+    gap: 15px; /* Добавляем промежуток между элементами */
+    box-sizing: border-box; /* Убедитесь, что padding и border включены в общую ширину */
+    margin: 0; /* Убедитесь, что нет отступов */
+  }
+  
+  .navbar a {
+    text-decoration: none;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+  }
+  
+  .navbar a:hover {
+    color: #f4a261;
+  }

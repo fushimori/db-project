@@ -1,0 +1,52 @@
+/* Стили для медиа-элементов */
+.media-list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 30px;
+}
+
+.media-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  padding: 15px;
+  background-color: #fff; /* Белый фон карточки */
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  width: 200px;
+  height: auto; /* Высота зависит от содержимого */
+  text-align: left; /* Выравнивание текста по левому краю */
+  overflow: hidden; /* Прячем элементы, выходящие за пределы */
+}
+
+.media-item:hover {
+  transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+.media-item img {
+  width: 100%;
+  height: 300px; /* Размер изображения фиксированный */
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.status {
+  padding: 5px 10px;
+  margin-top: 10px;
+  border-radius: 5px;
+  color: white;
+  background-color: #4CAF50;
+}
+
+/* Стили для текста в карточке */
+.media-item h3 {
+  font-size: 14px;
+  margin-top: 10px;
+  white-space: wrap; /* Запрещаем перенос текста */
+  overflow: hidden;
+  text-overflow: ellipsis; /* Текст скрывается с многоточием */
+}

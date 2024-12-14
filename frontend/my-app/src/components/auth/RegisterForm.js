@@ -1,7 +1,8 @@
 // src/components/RegisterForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';  // Контекст для регистрации
+import { useAuth } from '../../context/AuthContext';  // Контекст для регистрации
+import './RegisterForm.css';
 
 const RegisterForm = () => {
   const [username, setUsername] = useState('');

@@ -1,0 +1,87 @@
+/* src/components/PersonDetails.css */
+
+/* Основной контейнер для деталей персоны */
+.person-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Контейнер для изображения и информации */
+.person-content {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  width: 100%;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Изображение персоны */
+.person-content img {
+  width: 300px; /* Фиксированный размер для изображения */
+  height: auto;
+  object-fit: cover; /* Сохранение пропорций изображения */
+  border-radius: 8px;
+}
+
+/* Контейнер с информацией о персоне */
+.person-info {
+  max-width: 800px;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Заголовок */
+.person-info h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Текст описания */
+.person-info p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Разделение информации о персоне */
+.person-info .section {
+  margin-bottom: 20px;
+}
+
+/* Стиль для рейтинга и отзывов */
+.person-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.person-info .user-review p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .person-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .person-info {
+    width: 100%;
+    max-width: none;
+  }
+
+  .person-content img {
+    width: 100%;
+    max-width: 300px;
+  }
+}

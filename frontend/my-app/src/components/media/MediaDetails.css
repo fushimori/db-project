@@ -1,0 +1,227 @@
+/* Основной контейнер для деталей медиа */
+.media-details {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px;
+  font-family: Arial, sans-serif;
+}
+
+/* Контейнер для изображения и информации */
+.media-content {
+  display: flex;
+  flex-wrap: wrap;
+  max-width: 1200px;
+  width: 100%;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-start;
+}
+
+/* Изображение медиа */
+.media-content img {
+  width: 300px; /* Фиксированный размер для изображения */
+  height: auto;
+  object-fit: cover; /* Сохранение пропорций изображения */
+  border-radius: 8px;
+}
+
+/* Контейнер с информацией о медиа */
+.media-info {
+  max-width: 800px;
+  width: 100%;
+  flex-grow: 1;
+}
+
+/* Заголовок */
+.media-info h1 {
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 10px;
+}
+
+/* Текст описания */
+.media-info p {
+  font-size: 1rem;
+  line-height: 1.5;
+  color: #555;
+  margin-bottom: 10px;
+}
+
+/* Статус и кнопки */
+.media-info label {
+  font-weight: bold;
+  margin-bottom: 5px;
+  display: inline-block;
+}
+
+.media-info select {
+  font-size: 1rem;
+  padding: 8px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  margin-bottom: 10px;
+  width: 100%;
+  max-width: 200px;
+}
+
+.media-info button {
+  padding: 8px 16px;
+  font-size: 1rem;
+  border: none;
+  background-color: #f44336; /* Красная кнопка удаления */
+  color: white;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.3s ease;
+}
+
+.media-info button:hover {
+  background-color: #d32f2f; /* Темнее красный при наведении */
+}
+
+.media-info button:disabled {
+  background-color: #ccc; /* Отключенная кнопка */
+  cursor: not-allowed;
+}
+
+.media-info select:disabled {
+  background-color: #f2f2f2; /* Отключенный select */
+}
+
+/* Разделение информации о медиа */
+.media-info .section {
+  margin-bottom: 20px;
+}
+
+/* Стиль для рейтинга и отзывов */
+.media-info h3 {
+  font-size: 1.25rem;
+  margin-bottom: 5px;
+  color: #333;
+}
+
+.media-info .user-review p {
+  font-size: 1rem;
+  color: #666;
+}
+
+/* Мобильная адаптация */
+@media (max-width: 768px) {
+  .media-content {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .media-info {
+    width: 100%;
+    max-width: none;
+  }
+
+  .media-content img {
+    width: 100%;
+    max-width: 300px;
+  }
+}
+
+/* Новые стили для каста, жанров и связанных медиа */
+
+/* Каст медиа */
+.media-cast {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 40px;
+}
+
+.media-cast h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.media-cast ul {
+  list-style: none;
+  padding: 0;
+}
+
+.media-cast li {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.media-cast li:last-child {
+  border-bottom: none;
+}
+
+/* Жанры медиа */
+.media-genres {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 40px;
+}
+
+.media-genres h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.media-genres ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.media-genres li {
+  font-size: 1rem;
+  color: #fff;
+  background-color: #3f51b5; /* Синий цвет для жанров */
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.media-genres li:hover {
+  background-color: #303f9f; /* Темнее синий при наведении */
+}
+
+/* Связанные медиа */
+.related-media {
+  width: 100%;
+  max-width: 1200px;
+  margin-top: 40px;
+}
+
+.related-media h2 {
+  font-size: 1.5rem;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 15px;
+}
+
+.related-media ul {
+  list-style: none;
+  padding: 0;
+}
+
+.related-media li {
+  font-size: 1rem;
+  color: #555;
+  margin-bottom: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.related-media li:last-child {
+  border-bottom: none;
+}

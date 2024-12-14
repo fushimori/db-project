@@ -9,6 +9,9 @@ COPY ./backend /app/
 RUN pip install --upgrade pip
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Устанавливаем клиент PostgreSQL (для работы с pg_dump и psql)
+RUN apt-get update && apt-get install -y postgresql-client
+
 # Устанавливаем переменную окружения
 ENV PYTHONPATH=/app
 

@@ -1,7 +1,8 @@
 // src/components/LoginForm.js
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext';  // Контекст для обновления состояния аутентификации
+import { useAuth } from '../../context/AuthContext';  // Контекст для обновления состояния аутентификации
+import './LoginForm.css';
 
 const LoginForm = () => {
   const [username, setUsername] = useState('');

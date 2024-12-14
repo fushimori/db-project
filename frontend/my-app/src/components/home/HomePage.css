@@ -1,0 +1,82 @@
+/* src/components/HomePage.css */
+
+/* Основной контейнер страницы */
+.home-page {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start; /* Выравниваем содержимое наверху */
+  height: 100vh; /* Высота страницы */
+  text-align: center;
+  padding: 20px;
+}
+
+/* Заголовок страницы */
+.home-page h2 {
+  font-size: 28px;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+/* Контейнер для иконки и текста */
+.home-page .icon-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+/* Стили для кнопок администратора */
+.home-page .admin-actions {
+  display: flex;
+  gap: 10px; /* Промежуток между кнопками */
+}
+
+.home-page .admin-actions button {
+  padding: 10px 15px;
+  font-size: 16px;
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.home-page .admin-actions button:hover {
+  background-color: #45a049;
+}
+
+.home-page .admin-actions button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+/* Стили для пульсирующей иконки */
+.pulsing-icon {
+  display: inline-block;
+  cursor: pointer;
+  animation: pulse 6s infinite; /* Анимация с пульсацией */
+  transform-origin: center; /* Центрируем трансформацию */
+}
+
+.pulsing-icon svg {
+  width: 100px; /* Размер иконки */
+  height: 100px;
+  animation: pulse 6s infinite; /* Анимация с пульсацией */
+}
+
+/* Анимация пульсации */
+@keyframes pulse {
+  0% {
+    transform: scale(1); /* Начальный размер */
+    opacity: 1; /* Полная видимость */
+  }
+  50% {
+    transform: scale(1.1); /* Увеличиваем размер */
+    opacity: 0.9; /* Немного уменьшаем прозрачность */
+  }
+  100% {
+    transform: scale(1); /* Возвращаем к исходному размеру */
+    opacity: 1; /* Полная видимость */
+  }
+}

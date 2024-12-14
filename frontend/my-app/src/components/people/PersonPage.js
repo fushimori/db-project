@@ -1,12 +1,11 @@
-
 // src/components/PersonPage.js
 import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, Link } from 'react-router-dom';
-import { getPerson, searchPerson } from '../api/media';
-import SearchBar from './SearchBar';
+import { getPerson, searchPerson } from '../../api/media';
+import SearchBar from '../navigation/SearchBar';
+import './PersonPage.css'; // Импортируем CSS-файл
 
-
-const PersonItem = ({ person }) => {  // Используйте деструктуризацию для props
+const PersonItem = ({ person }) => {
   return (
     <div className="person">
       <Link to={`/person/${person.id}`}>
@@ -17,31 +16,28 @@ const PersonItem = ({ person }) => {  // Используйте деструкт
   );
 };
 
-
 const PersonPage = () => {
   const [personList, setPersonList] = useState([]);
   const [filteredPersonList, setFilteredPersonList] = useState([]);
   const location = useLocation();
 
-  // Функция получения query-параметра из URL
   const getQueryParam = useCallback(() => {
     const params = new URLSearchParams(location.search);
     return params.get('query') || '';
   }, [location.search]);
 
-  // Загрузка данных о персонах и обработка query
   useEffect(() => {
     const fetchPersons = async () => {
       const query = getQueryParam();
       try {
         let data;
         if (query) {
-          data = await searchPerson(query); // Поиск по запросу
+          data = await searchPerson(query);
         } else {
-          data = await getPerson(); // Загрузка всех данных, если query отсутствует
+          data = await getPerson();
         }
-        setPersonList(data.person || data.results); // Обновляем список персон
-        setFilteredPersonList(data.person || data.results); // Отображаем изначально все или отфильтрованные данные
+        setPersonList(data.person || data.results);
+        setFilteredPersonList(data.person || data.results);
       } catch (error) {
         console.error('Error fetching person data:', error);
       }
@@ -49,7 +45,6 @@ const PersonPage = () => {
     fetchPersons();
   }, [getQueryParam]);
 
-  // Обработчик поиска по имени персоны
   const handleSearch = (query) => {
     setFilteredPersonList(
       personList.filter((person) =>
@@ -59,7 +54,7 @@ const PersonPage = () => {
   };
 
   return (
-    <div>
+    <div className="person-page">
       <h2>Persons</h2>
       <SearchBar currentCategory="person" onSearch={handleSearch} />
       <div className="person-list">
